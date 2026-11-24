@@ -10,8 +10,8 @@ import { SiteHeader } from '../components/site-header';
 import { EmptyState, ErrorBlock, LoadingBlock } from '../components/states';
 import { WishlistCard } from '../components/wishlist-card';
 
-/** Панель в необруталистском стиле: 2px рамка + жёсткая тень. */
-const panel = 'rounded-2xl border border-line bg-card';
+/** Панель в необруталистском стиле: тонкая чёрная рамка + белая поверхность. */
+const panel = 'rounded-2xl border border-ink bg-card';
 
 /** Публичный профиль /u/:username: шапка, вишлисты, подписка. */
 export default function PublicProfilePage() {

@@ -40,7 +40,7 @@ export function WishlistCard({ wishlist, href, action }: WishlistCardProps) {
 
  if (!action) {
  return (
- <Link to={href} className="group nb-card block p-5 transition-colors hover:border-ink/25">
+ <Link to={href} className="group nb-card block p-5 transition-transform hover:-translate-y-0.5">
  {content}
  </Link>
  );

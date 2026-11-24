@@ -10,8 +10,8 @@ import { ProfileHeader } from '../components/profile-header';
 import { WishlistCard } from '../components/wishlist-card';
 import { EmptyState, ErrorBlock, LoadingBlock } from '../components/states';
 
-/** Панель в необруталистском стиле: 2px рамка + жёсткая тень. */
-const panel = 'rounded-2xl border border-line bg-card';
+/** Панель в необруталистском стиле: тонкая чёрная рамка + белая поверхность. */
+const panel = 'rounded-2xl border border-ink bg-card';
 
 /** /app/profile — профиль в аккаунте, выглядит как публичный. */
 export default function AccountProfilePage() {

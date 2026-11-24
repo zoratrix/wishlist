@@ -182,9 +182,9 @@
   }
 }
 
-/* Карточка: белая, тонкий контур, крупное скругление, без тени. */
+/* Карточка: белая поверхность с тонкой чёрной рамкой, крупное скругление. */
 @utility nb-card {
-  border: 1px solid var(--color-line);
+  border: 1px solid var(--color-ink);
   border-radius: var(--radius-2xl);
   background-color: var(--color-card);
 }
