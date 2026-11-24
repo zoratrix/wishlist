@@ -1,0 +1,30 @@
+# Зависимости и сборка
+node_modules/
+dist/
+web/dist/
+server/dist/
+
+# Секреты и локальная конфигурация
+.env
+.env.*
+!.env.example
+
+# Данные приложения (вишлисты, загрузки, бэкапы)
+server/data/*.db
+server/data/*.db-shm
+server/data/*.db-wal
+uploads/*
+!uploads/.gitkeep
+backups/
+logs/
+*.log
+
+# Служебное
+.npm-cache/
+design-ref/
+.DS_Store
+Thumbs.db
+
+# Внутренние инструкции — не публикуются в репозитории
+_SMTP-SETUP.md
+_FRIEND-DEPLOY.md

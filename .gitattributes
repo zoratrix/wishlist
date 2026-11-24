@@ -1,0 +1,18 @@
+# Единые переводы строк: сервер работает на Linux, разработка — на Windows.
+# Без этого shell-скрипты и .env с CRLF ломаются на сервере.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+
+*.sh text eol=lf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+*.sh text eol=lf
+docker-entrypoint.sh text eol=lf

@@ -1,0 +1,17 @@
+node_modules
+**/node_modules
+dist
+web/dist
+server/dist
+.git
+.gitignore
+data
+backups
+uploads
+*.log
+.env
+.env.*
+!.env.example
+design-ref
+_SMTP-SETUP.md
+_FRIEND-DEPLOY.md

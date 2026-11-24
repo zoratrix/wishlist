@@ -1,0 +1,52 @@
+# «Хотелки» — production-развёртывание в Docker.
+#
+# 1. Скопируйте .env.example в .env и заполните значения (см. DEPLOY.md).
+# 2. Запустите:  docker compose up -d --build
+# 3. Сайт:       http://IP-сервера:3000
+#
+# Данные (база + загруженные файлы) лежат в папке ./data рядом с этим файлом.
+# Не удаляйте её — это все вишлисты, подарки, аватары и обложки.
+
+services:
+  app:
+    build: .
+    image: hotelets:latest
+    container_name: hotelets
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 3000
+      DATABASE_PATH: /data/app.db
+      UPLOAD_DIR: /data/uploads
+      TZ: ${TZ:-Europe/Moscow}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/data
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      start_period: 25s
+      retries: 3
+
+  # Почтовый сервер для проверки писем локально/на сервере.
+  # Запуск:  docker compose --profile mail up -d
+  # Веб-интерфейс писем:  http://IP-сервера:8025
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: hotelets-mailpit
+    restart: unless-stopped
+    profiles: ["mail"]
+    ports:
+      - "1025:1025"
+      - "8025:8025"

@@ -1,0 +1,255 @@
+@import 'tailwindcss';
+
+/*
+ * Оформление «мягкий необрутализм» по новому референсу: светлый фон, белые
+ * карточки с тонкими тёмными контурами, крупные скругления, пастельные акценты
+ * (жёлтый — главное действие), точечные жёсткие тени только у акцентных кнопок.
+ * Палитры категорий и тем вишлистов живут в lib/*-colors.ts и не дублируются.
+ */
+@theme {
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  --color-paper: #f6f6f3;
+  --color-card: #ffffff;
+  --color-ink: #141414;
+  /* Тонкий контур для обычных поверхностей; акценты используют ink. */
+  --color-line: #e6e6e1;
+  --color-line-strong: #141414;
+  --color-muted: #6f6f68;
+
+  /* Главный акцент — мягкий жёлтый; тёмный текст на нём читается. */
+  --color-accent: #f2e06c;
+  --color-accent-soft: #fbf6d9;
+  --color-primary: #f2e06c;
+  --color-primary-soft: #fbf6d9;
+
+  --color-lavender: #dcd3f2;
+  --color-lavender-soft: #f0ecfa;
+  --color-mint-soft: #dfeede;
+  --color-butter-soft: #fbf3c9;
+  --color-powder-soft: #f9e0e3;
+  --color-sky-soft: #dceff7;
+
+  --color-ok: #4f7d5c;
+  --color-ok-soft: #dfeede;
+  --color-warning: #8a6a1f;
+  --color-warning-soft: #fbf3c9;
+  --color-danger: #a8493f;
+  --color-danger-soft: #f9e0e3;
+
+  /* Крупные скругления: карточки и кнопки-«таблетки». */
+  --radius-sm: 10px;
+  --radius-md: 12px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-2xl: 22px;
+  --radius-3xl: 26px;
+}
+
+:root {
+  --radius: 22px;
+  --nb-shadow: 2px 2px 0 var(--color-ink);
+  --nb-shadow-sm: 1px 1px 0 var(--color-ink);
+  --nb-shadow-lg: 3px 3px 0 var(--color-ink);
+  --soft-shadow: 0 12px 32px rgba(20, 20, 20, 0.08);
+  --nb-overlay: rgba(20, 20, 20, 0.35);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-weight: 400;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Заголовки уверенные, но не «жирные» — читаемость важнее эффекта. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  h1 {
+    line-height: 1.18;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+
+  button,
+  a {
+    touch-action: manipulation;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-ink);
+  }
+
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+}
+
+/* ── Утилиты ────────────────────────────────────────────────────────────── */
+
+@utility nb-shadow {
+  box-shadow: var(--nb-shadow);
+}
+
+@utility nb-shadow-sm {
+  box-shadow: var(--nb-shadow-sm);
+}
+
+@utility nb-shadow-lg {
+  box-shadow: var(--nb-shadow-lg);
+}
+
+@utility nb-shadow-none {
+  box-shadow: none;
+}
+
+/* Мягкая тень для всплывающих поверхностей (модалки, меню). */
+@utility nb-soft-shadow {
+  box-shadow: var(--soft-shadow);
+}
+
+/* Акцентная кнопка: лёгкий сдвиг при нажатии, без «пружины» на hover. */
+@utility nb-accent-shadow {
+  box-shadow: var(--nb-shadow);
+  transition:
+    box-shadow 120ms ease,
+    transform 120ms ease;
+
+  &:active {
+    transform: translate(1px, 1px);
+    box-shadow: none;
+  }
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    transform: none;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+}
+
+@utility nb-press {
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease,
+    background-color 120ms ease;
+
+  &:hover {
+    transform: translate(1px, 1px);
+    box-shadow: var(--nb-shadow-sm);
+  }
+
+  &:active {
+    transform: translate(2px, 2px);
+    box-shadow: none;
+  }
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    transform: none;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+}
+
+@utility nb-focus {
+  &:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+}
+
+/* Карточка: белая, тонкий контур, крупное скругление, без тени. */
+@utility nb-card {
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-2xl);
+  background-color: var(--color-card);
+}
+
+/* Бейдж-таблетка: пастельный фон задаётся снаружи. */
+@utility nb-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border: 1px solid var(--color-ink);
+  border-radius: 999px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+/* ── Чекбокс: тонкий контур, зона нажатия 44px ─────────────────────────── */
+
+.nb-check {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.nb-check:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+.nb-check:disabled {
+  cursor: not-allowed;
+}
+
+.nb-check-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+  border: 1px solid var(--color-ink);
+  border-radius: 7px;
+  background-color: var(--color-card);
+  color: var(--color-ink);
+}
+
+.nb-check-box svg {
+  opacity: 0;
+}
+
+.nb-check:checked + .nb-check-box {
+  background-color: var(--color-accent);
+}
+
+.nb-check:checked + .nb-check-box svg {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

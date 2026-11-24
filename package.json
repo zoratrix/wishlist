@@ -1,0 +1,31 @@
+{
+  "name": "wishlist",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Платформа вишлистов с бронированием подарков без регистрации",
+  "type": "module",
+  "workspaces": [
+    "server",
+    "web"
+  ],
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "dev": "npm run dev -w server",
+    "dev:watch": "npm run dev:watch -w server",
+    "build": "npm run build -w server && npm run build -w web",
+    "start": "npm run start -w server",
+    "test": "npm run test -w server && npm run test -w web",
+    "test:server": "npm run test -w server",
+    "test:web": "npm run test -w web",
+    "e2e:smoke": "node tools/e2e-smoke.mjs",
+    "db:migrate": "npm run db:migrate -w server",
+    "db:seed": "npm run db:seed -w server",
+    "db:backup": "npm run db:backup -w server",
+    "typecheck": "npm run typecheck -w server && npm run typecheck -w web"
+  },
+  "devDependencies": {
+    "typescript": "7.0.2"
+  }
+}
