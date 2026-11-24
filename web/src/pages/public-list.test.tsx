@@ -201,7 +201,10 @@ describe('публичная страница вишлиста', () => {
  renderApp('/w/token-1');
  expect(await screen.findByText('Забронировано вами')).toBeTruthy();
 
- fireEvent.click(screen.getByRole('button', { name: 'Отменить бронирование' }));
+ // Видимая подпись короткая (влезает в колонку таблицы), полное имя — для скринридеров.
+ const unbookRowButton = screen.getByRole('button', { name: 'Отменить бронирование' });
+ expect(unbookRowButton.textContent).toBe('Отменить');
+ fireEvent.click(unbookRowButton);
 
  const dialog = await screen.findByRole('dialog');
  const emailInput = within(dialog).getByLabelText('Электронная почта') as HTMLInputElement;

@@ -39,6 +39,12 @@ const BOOKED_MESSAGE = 'Готово! Подарок забронирован.';
 const BOOKED_HINT =
  'Отметка «Забронировано вами» хранится только в этом браузере — по ней вы сможете отменить бронь.';
 const UNBOOKED_MESSAGE = 'Бронирование отменено.';
+/**
+ * Действия гостя: на телефоне компактнее (в строке и так тесно), на компьютере
+ * обычный размер. Кнопка не сжимается — иначе в узкой колонке таблицы текст
+ * вылезает за «таблетку» (видно на 768–1100px).
+ */
+const GUEST_ACTION_CLASS = 'shrink-0 whitespace-nowrap max-md:min-h-9 max-md:px-3 max-md:text-xs';
 
 function statusForGift(gift: GiftDTO, mine: MyBookingRecord | undefined): GiftStatusView {
  if (gift.status === 'gifted') {
@@ -174,13 +180,20 @@ export default function PublicListPage() {
  }
  if (gift.booking !== null) {
  return (
- <Button variant="secondary" size="sm" onClick={() => setGiftToUnbook(gift)}>
- Отменить бронирование
+ <Button
+ variant="secondary"
+ size="sm"
+ className={GUEST_ACTION_CLASS}
+ aria-label="Отменить бронирование"
+ title="Отменить бронирование"
+ onClick={() => setGiftToUnbook(gift)}
+ >
+ Отменить
  </Button>
  );
  }
  return (
- <Button size="sm" onClick={() => setGiftToBook(gift)}>
+ <Button size="sm" className={GUEST_ACTION_CLASS} onClick={() => setGiftToBook(gift)}>
  Забронировать
  </Button>
  );

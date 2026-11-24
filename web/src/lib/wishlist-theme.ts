@@ -106,7 +106,10 @@ function parseHexColor(color: string): [number, number, number] | null {
   ];
 }
 
-/** #RRGGBB → rgba(..., alpha); null, если цвет не hex-формата. */
+/**
+ * Цвет темы на прозрачной основе: для фоновых слоёв страницы (page background,
+ * тинты). Шапка вишлиста намеренно непрозрачная — см. `WishlistHero`.
+ */
 export function themeTint(color: string | null | undefined, alpha: number): string | null {
   if (!color) {
     return null;
@@ -146,11 +149,6 @@ export function darkenThemeColor(color: string, factor = 0.78): string {
   }
   const channel = (value: number) => value.toString(16).padStart(2, '0');
   return `#${channel(current[0])}${channel(current[1])}${channel(current[2])}`;
-}
-
-/** Светлый оттенок темы для шапки/баннера списка. */
-export function themeHeroTint(color: string | null | undefined): string | undefined {
-  return themeTint(color, 0.2) ?? undefined;
 }
 
 /**

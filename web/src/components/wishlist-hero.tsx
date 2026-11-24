@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { themeHeroTint, themeStripStyle } from '../lib/wishlist-theme';
+import { themeStripStyle } from '../lib/wishlist-theme';
 
 export interface WishlistHeroProps {
   coverPath: string | null;
@@ -9,8 +9,9 @@ export interface WishlistHeroProps {
 }
 
 /**
- * Шапка вишлиста: обложка (если есть) + оттенок и акцентная полоса цвета темы.
- * Логика темы сохранена: при заданном цвете подсвечиваются подложка, полоса и обводка шапки.
+ * Шапка вишлиста: обложка (если есть) + акцентная полоса и обводка цвета темы.
+ * Фон всегда как у карточек (`bg-card`) — шапка не должна просвечивать фоном
+ * страницы и эмодзи-оформлением; тема видна в полосе и рамке.
  */
 export function WishlistHero({ coverPath, themeColor, children, className }: WishlistHeroProps) {
   return (
@@ -23,11 +24,7 @@ export function WishlistHero({ coverPath, themeColor, children, className }: Wis
       ]
         .join(' ')
         .trim()}
-      style={
-        themeColor
-          ? { borderColor: themeColor, backgroundColor: themeHeroTint(themeColor) }
-          : undefined
-      }
+      style={themeColor ? { borderColor: themeColor } : undefined}
     >
       {themeColor ? (
         <div

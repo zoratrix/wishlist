@@ -12,9 +12,10 @@ function navLinkClass({ isActive }: { isActive: boolean }): string {
   ].join(' ');
 }
 
-function tabLinkClass({ isActive }: { isActive: boolean }): string {
+/** Пункт мобильного меню второй строки шапки: тач-цель не меньше 44px. */
+function mobileNavLinkClass({ isActive }: { isActive: boolean }): string {
   return [
-    'nb-focus m-1 flex min-h-14 items-center justify-center rounded-full px-2 text-sm font-medium transition-colors',
+    'nb-focus flex min-h-11 items-center justify-center rounded-full px-2 text-sm font-medium transition-colors',
     isActive
       ? 'bg-accent-soft text-ink'
       : 'text-muted hover:text-ink',
@@ -56,7 +57,8 @@ const AUTHED_ITEMS: NavItem[] = [
 
 /**
  * Единая шапка сайта: логотип-стикер, меню и аватар пользователя.
- * Для гостя — «Лента»/«Войти»; нижняя мобильная навигация только для вошедших.
+ * Для гостя — «Лента»/«Войти»; у вошедших на мобильных меню разделов
+ * идёт второй строкой внутри шапки (отдельный nav с aria-label «Разделы»).
  */
 export function SiteHeader() {
   const { user } = useAuth();
@@ -73,73 +75,71 @@ export function SiteHeader() {
   }
 
   return (
-    <>
-      <header className="sticky top-0 z-20 border-b border-line bg-paper/95 backdrop-blur-sm">
-        <div className="mx-auto flex w-full max-w-[1440px] items-center gap-2 px-3 py-2 md:px-6 lg:px-8">
-          <BrandSticker to={user ? '/app/profile' : '/'} />
+    <header className="sticky top-0 z-20 border-b border-line bg-paper/95 backdrop-blur-sm">
+      <div className="mx-auto flex w-full max-w-[1440px] items-center gap-2 px-3 py-2 md:px-6 lg:px-8">
+        <BrandSticker to={user ? '/app/profile' : '/'} />
 
-          {user ? (
-            <>
-              <nav className="ml-4 hidden items-center gap-0.5 rounded-full bg-sky-soft p-1 md:flex" aria-label="Основная навигация">
-                {AUTHED_ITEMS.map((item) => (
-                  <NavLink key={item.to} to={item.to} end={item.end} className={navLinkClass}>
-                    {item.label}
-                  </NavLink>
-                ))}
-              </nav>
-
-              <div className="ml-auto flex min-w-0 items-center gap-1 sm:gap-2">
-                <Link
-                  to="/app/profile"
-                  className="nb-focus flex min-h-11 items-center gap-2 rounded-full border border-transparent px-1.5 hover:bg-paper"
-                >
-                  <UserAvatar
-                    name={user.displayName}
-                    username={user.username}
-                    avatarPath={user.avatarPath}
-                    size="sm"
-                  />
-                  <span className="hidden max-w-40 truncate text-sm font-medium text-ink sm:block">
-                    {user.displayName}
-                  </span>
-                </Link>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => void handleLogout()}
-                  loading={logout.isPending}
-                >
-                  Выйти
-                </Button>
-              </div>
-            </>
-          ) : (
-            <nav className="ml-auto flex items-center gap-1.5 sm:gap-2" aria-label="Гостевая навигация">
-              <Link to="/login" className={navLinkClass({ isActive: false })}>
-                Лента
-              </Link>
-              <Link to="/login" className={buttonClasses('secondary', 'sm')}>
-                Войти
-              </Link>
+        {user ? (
+          <>
+            <nav className="ml-4 hidden items-center gap-0.5 rounded-full bg-sky-soft p-1 md:flex" aria-label="Основная навигация">
+              {AUTHED_ITEMS.map((item) => (
+                <NavLink key={item.to} to={item.to} end={item.end} className={navLinkClass}>
+                  {item.label}
+                </NavLink>
+              ))}
             </nav>
-          )}
-        </div>
-      </header>
+
+            <div className="ml-auto flex min-w-0 items-center gap-1 sm:gap-2">
+              <Link
+                to="/app/profile"
+                className="nb-focus flex min-h-11 items-center gap-2 rounded-full border border-transparent px-1.5 hover:bg-paper"
+              >
+                <UserAvatar
+                  name={user.displayName}
+                  username={user.username}
+                  avatarPath={user.avatarPath}
+                  size="sm"
+                />
+                <span className="hidden max-w-40 truncate text-sm font-medium text-ink sm:block">
+                  {user.displayName}
+                </span>
+              </Link>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => void handleLogout()}
+                loading={logout.isPending}
+              >
+                Выйти
+              </Button>
+            </div>
+          </>
+        ) : (
+          <nav className="ml-auto flex items-center gap-1.5 sm:gap-2" aria-label="Гостевая навигация">
+            <Link to="/login" className={navLinkClass({ isActive: false })}>
+              Лента
+            </Link>
+            <Link to="/login" className={buttonClasses('secondary', 'sm')}>
+              Войти
+            </Link>
+          </nav>
+        )}
+      </div>
 
       {user ? (
         <nav
-          aria-label="Нижняя навигация"
-          className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-card pb-[env(safe-area-inset-bottom)] md:hidden"
+          aria-label="Разделы"
+          className="mx-auto w-full max-w-[1440px] px-3 pb-2 md:hidden lg:px-8"
         >
-          <div className="mx-auto grid max-w-3xl grid-cols-3">
+          <div className="grid grid-cols-3 gap-1 rounded-full bg-sky-soft p-1">
             {AUTHED_ITEMS.map((item) => (
-              <NavLink key={item.to} to={item.to} end={item.end} className={tabLinkClass}>
+              <NavLink key={item.to} to={item.to} end={item.end} className={mobileNavLinkClass}>
                 {item.label}
               </NavLink>
             ))}
           </div>
         </nav>
       ) : null}
-    </>
+    </header>
   );
 }

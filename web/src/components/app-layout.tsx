@@ -6,7 +6,7 @@ export function AppLayout() {
  return (
  <div className="flex min-h-dvh flex-col bg-paper">
  <SiteHeader />
- <main className="w-full flex-1 pb-28 md:pb-12">
+ <main className="w-full flex-1 pb-12">
  <Outlet />
  </main>
  </div>
