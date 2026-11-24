@@ -19,8 +19,8 @@ beforeEach(() => {
   app = createTestApp();
 });
 
-const BLUE = '#5A7BA6';
-const GREEN = '#6E9B78';
+const BLUE = '#7FAFE2';
+const GREEN = '#7FC290';
 
 async function setup(): Promise<{ auth: AuthContext; wishlistId: string; shareToken: string }> {
   const auth = await registerUser(app);

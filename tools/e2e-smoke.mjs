@@ -285,20 +285,20 @@ check('чужое удаление → 404', foreignDelete.status === 404, `stat
 console.log('[9] Категории (теги) вишлиста');
 const categoryA = await req(owner, 'POST', `/api/me/wishlists/${wishlistId}/categories`, {
   name: 'Электроника',
-  color: '#5A7BA6',
+  color: '#7FAFE2',
 });
 const categoryId = categoryA.json?.category?.id;
 check('создание категории 201', categoryA.status === 201 && Boolean(categoryId), JSON.stringify(categoryA.json));
-check('цвет категории сохранён', categoryA.json?.category?.color === '#5A7BA6', String(categoryA.json?.category?.color));
+check('цвет категории сохранён', categoryA.json?.category?.color === '#7FAFE2', String(categoryA.json?.category?.color));
 const badColor = await req(owner, 'POST', `/api/me/wishlists/${wishlistId}/categories`, {
   name: 'Плохой цвет',
   color: '#12345',
 });
 check('невалидный цвет → 400', badColor.status === 400, `status=${badColor.status}`);
-const recolorCategory = await req(owner, 'PATCH', `/api/me/categories/${categoryId}`, { color: '#6E9B78' });
+const recolorCategory = await req(owner, 'PATCH', `/api/me/categories/${categoryId}`, { color: '#7FC290' });
 check(
   'смена цвета категории',
-  recolorCategory.status === 200 && recolorCategory.json?.category?.color === '#6E9B78',
+  recolorCategory.status === 200 && recolorCategory.json?.category?.color === '#7FC290',
   JSON.stringify(recolorCategory.json?.category),
 );
 const duplicateCategory = await req(owner, 'POST', `/api/me/wishlists/${wishlistId}/categories`, { name: 'Электроника' });
@@ -319,7 +319,7 @@ const publicGiftCategories = publicWithCategories.json?.gifts?.find((g) => g.id 
 check('гость видит тег подарка', publicGiftCategories?.categories?.[0]?.name === 'Электроника');
 check(
   'гость видит цвет категории',
-  publicWithCategories.json?.categories?.[0]?.color === '#6E9B78',
+  publicWithCategories.json?.categories?.[0]?.color === '#7FC290',
   String(publicWithCategories.json?.categories?.[0]?.color),
 );
 const renamedCategory = await req(owner, 'PATCH', `/api/me/categories/${categoryId}`, { name: 'Техника' });

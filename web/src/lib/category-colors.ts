@@ -1,14 +1,16 @@
-/** Палитра цветов категорий (общая для пикера и чипов). */
+/** Палитра цветов категорий (общая для пикера и чипов). Пастельная, чистая. */
+
+import { mixHexWithWhite } from './color';
 
 export const CATEGORY_COLORS = [
-  '#C4574D',
-  '#C57A44',
-  '#C0A24C',
-  '#6E9B78',
-  '#4F8C86',
-  '#5A7BA6',
-  '#8A7BB2',
-  '#B36B88',
+  '#E0776A',
+  '#EE9B63',
+  '#E8C466',
+  '#7FC290',
+  '#64BDB2',
+  '#7FAFE2',
+  '#A78FDE',
+  '#E28FAF',
 ] as const;
 
 export type CategoryColor = (typeof CATEGORY_COLORS)[number];
@@ -22,14 +24,15 @@ export interface CategoryTint {
 }
 
 /**
- * Светлая подложка чипа + рамка выбранного цвета. Текст остаётся тёмным —
- * цвет используется только как акцент, чтобы контраст текста не падал.
+ * Светлая непрозрачная подложка чипа. Текст остаётся тёмным — цвет
+ * используется только как акцент, чтобы контраст текста не падал.
+ * Полупрозрачный тинт здесь нельзя: сквозь него просвечивает фон страницы.
  */
 export function categoryTint(color: string | null | undefined): CategoryTint | undefined {
   if (!color) {
     return undefined;
   }
-  return { backgroundColor: `${color}24` };
+  return { backgroundColor: mixHexWithWhite(color, 0.16) };
 }
 
 export function categoryDotStyle(

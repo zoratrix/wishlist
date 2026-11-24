@@ -82,28 +82,28 @@ export async function seed(): Promise<boolean> {
     insertWishlist.run(
       wishlistBirthday, annaId, 'День рождения',
       'Буду рада любому из списка — приятно, что вы вообще зашли.',
-      '2026-12-20', 'link', 'annaBD2', 0, 0, 0, '#C4574D', '🎁', now, now,
+      '2026-12-20', 'link', 'annaBD2', 0, 0, 0, '#E0776A', '🎁', now, now,
     );
     insertWishlist.run(
       wishlistBooks, annaId, 'Книги',
-      'Список для пополнения библиотеки.', null, 'link', 'annaBK3', 1, 0, 0, '#5A7BA6', '📚', now, now,
+      'Список для пополнения библиотеки.', null, 'link', 'annaBK3', 1, 0, 0, '#7FAFE2', '📚', now, now,
     );
     insertWishlist.run(
       wishlistIdeas, annaId, 'Просто мои желания',
-      'То, что пригодилось бы в быту.', null, 'followers', 'annaWS4', 2, 0, 0, '#8A7BB2', null, now, now,
+      'То, что пригодилось бы в быту.', null, 'followers', 'annaWS4', 2, 0, 0, '#A78FDE', null, now, now,
     );
     insertWishlist.run(
       wishlistNewYear, borisId, 'Новый год',
-      'Подарки к празднику.', '2027-01-01', 'link', 'borisNY', 0, 0, 0, '#6E9B78', null, now, now,
+      'Подарки к празднику.', '2027-01-01', 'link', 'borisNY', 0, 0, 0, '#7FC290', null, now, now,
     );
 
     const insertCategory = db.prepare(
       'INSERT INTO categories (id, wishlist_id, name, color, created_at) VALUES (?, ?, ?, ?, ?)',
     );
-    insertCategory.run(categoryElectronics, wishlistBirthday, 'Электроника', '#5A7BA6', now);
-    insertCategory.run(categoryCozy, wishlistBirthday, 'Уют', '#6E9B78', now);
-    insertCategory.run(categoryClassic, wishlistBooks, 'Классика', '#C0A24C', now);
-    insertCategory.run(categoryModernProse, wishlistBooks, 'Современная проза', '#8A7BB2', now);
+    insertCategory.run(categoryElectronics, wishlistBirthday, 'Электроника', '#7FAFE2', now);
+    insertCategory.run(categoryCozy, wishlistBirthday, 'Уют', '#7FC290', now);
+    insertCategory.run(categoryClassic, wishlistBooks, 'Классика', '#E8C466', now);
+    insertCategory.run(categoryModernProse, wishlistBooks, 'Современная проза', '#A78FDE', now);
 
     const insertGift = db.prepare(`
       INSERT INTO gifts (id, wishlist_id, title, description, price_minor, currency, priority,

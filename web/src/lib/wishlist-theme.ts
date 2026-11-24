@@ -1,16 +1,17 @@
 /** Приглушённая палитра тем оформления вишлиста (этап 4a) и эмодзи-фон (4b). */
 
 import type { CSSProperties } from 'react';
+import { mixHexWithWhite } from './color';
 
 export const WISHLIST_THEME_COLORS = [
-  '#C4574D',
-  '#C57A44',
-  '#C0A24C',
-  '#6E9B78',
-  '#4F8C86',
-  '#5A7BA6',
-  '#8A7BB2',
-  '#B36B88',
+  '#E0776A',
+  '#EE9B63',
+  '#E8C466',
+  '#7FC290',
+  '#64BDB2',
+  '#7FAFE2',
+  '#A78FDE',
+  '#E28FAF',
 ] as const;
 
 export type WishlistThemeColor = (typeof WISHLIST_THEME_COLORS)[number];
@@ -163,6 +164,13 @@ const TINT_ALPHA = 0.14;
 const TINT_STRONG_ALPHA = 0.2;
 const BORDER_ALPHA = 0.42;
 const PAGE_ALPHA = 0.11;
+/**
+ * Доля цвета темы в непрозрачных пастельных подложках. Ими подменяются
+ * «жёлтые» токены сайта (`butter-soft`, `accent-soft`) внутри страницы
+ * вишлиста: ценники, строка добавления подарка и подсветка строки при
+ * наведении получают оттенок выбранной темы, а не жёлтый по умолчанию.
+ */
+const SOFT_TINT_MIX = 0.16;
 
 export function wishlistThemeStyle(
   themeColor: string | null | undefined,
@@ -171,6 +179,7 @@ export function wishlistThemeStyle(
     return undefined;
   }
   const accentStrong = darkenThemeColor(themeColor);
+  const softTint = mixHexWithWhite(themeColor, SOFT_TINT_MIX);
   const tint = themeTint(themeColor, TINT_ALPHA);
   const tintStrong = themeTint(themeColor, TINT_STRONG_ALPHA);
   const border = themeTint(themeColor, BORDER_ALPHA);
@@ -186,7 +195,8 @@ export function wishlistThemeStyle(
     '--wl-border': border,
     '--wl-page-bg': page,
     '--color-accent': accentStrong,
-    '--color-accent-soft': tint,
+    '--color-accent-soft': softTint,
+    '--color-butter-soft': softTint,
     '--color-line': border,
   };
 }

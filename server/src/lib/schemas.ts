@@ -89,14 +89,14 @@ export const visibilitySchema = z.enum(['public', 'link', 'followers'], {
  * расширять без миграции схемы.
  */
 export const CATEGORY_COLOR_PALETTE = [
-  '#C4574D',
-  '#C57A44',
-  '#C0A24C',
-  '#6E9B78',
-  '#4F8C86',
-  '#5A7BA6',
-  '#8A7BB2',
-  '#B36B88',
+  '#E0776A',
+  '#EE9B63',
+  '#E8C466',
+  '#7FC290',
+  '#64BDB2',
+  '#7FAFE2',
+  '#A78FDE',
+  '#E28FAF',
 ] as const;
 
 export type CategoryColor = (typeof CATEGORY_COLOR_PALETTE)[number];

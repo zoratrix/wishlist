@@ -12,7 +12,7 @@ import {
  GUEST_VIEWER,
 } from '../test/helpers';
 
-const red = makeCategory('c1', 'Электроника', '#5A7BA6');
+const red = makeCategory('c1', 'Электроника', '#7FAFE2');
 const neutral = makeCategory('c2', 'Книги', null);
 
 function pickColor(name: string): void {
@@ -35,9 +35,9 @@ describe('цвет категорий: свотчи и запросы', () => {
  'aria-pressed',
  ),
  ).toBe('true');
- pickColor('Цвет #5A7BA6 новой категории');
+ pickColor('Цвет #7FAFE2 новой категории');
  expect(
- screen.getByRole('button', { name: 'Цвет #5A7BA6 новой категории' }).getAttribute(
+ screen.getByRole('button', { name: 'Цвет #7FAFE2 новой категории' }).getAttribute(
  'aria-pressed',
  ),
  ).toBe('true');
@@ -55,11 +55,11 @@ describe('цвет категорий: свотчи и запросы', () => {
  const createCall = calls.find(
  (call) => call.method === 'POST' && call.path === '/api/me/wishlists/list-1/categories',
  );
- expect(createCall?.body).toEqual({ name: 'Электроника', color: '#5A7BA6' });
+ expect(createCall?.body).toEqual({ name: 'Электроника', color: '#7FAFE2' });
 
  // Чип фильтра получил цвет.
  const chip = await screen.findByRole('button', { name: 'Электроника' });
- expect(chip.getAttribute('data-color')).toBe('#5A7BA6');
+ expect(chip.getAttribute('data-color')).toBe('#7FAFE2');
  expect(chip.style.backgroundColor).not.toBe('');
  });
 
@@ -91,17 +91,17 @@ describe('цвет категорий: свотчи и запросы', () => {
  await screen.findByText('Наушники');
 
  fireEvent.click(screen.getByRole('button', { name: 'Изменить' }));
- pickColor('Цвет #6E9B78 категории «Электроника»');
+ pickColor('Цвет #7FC290 категории «Электроника»');
 
  expect(await screen.findByText('Цвет категории изменён.')).toBeTruthy();
  const patchCall = calls.find(
  (call) => call.method === 'PATCH' && call.path === '/api/me/categories/c1',
  );
- expect(patchCall?.body).toEqual({ color: '#6E9B78' });
+ expect(patchCall?.body).toEqual({ color: '#7FC290' });
 
  // После обновления чип фильтра уже с новым цветом.
  const chip = await screen.findByRole('button', { name: 'Электроника' });
- expect(chip.getAttribute('data-color')).toBe('#6E9B78');
+ expect(chip.getAttribute('data-color')).toBe('#7FC290');
  });
  it('показывает ошибку API, если цвет не принят', async () => {
  mockApi({
@@ -123,7 +123,7 @@ describe('цвет категорий: свотчи и запросы', () => {
  await screen.findByRole('button', { name: 'Изменить' });
 
  fireEvent.click(screen.getByRole('button', { name: 'Изменить' }));
- pickColor('Цвет #C4574D категории «Электроника»');
+ pickColor('Цвет #E0776A категории «Электроника»');
 
  expect(await screen.findByText('Недопустимый цвет.')).toBeTruthy();
  });
@@ -146,7 +146,7 @@ describe('цветные чипы', () => {
  await screen.findByText('Наушники');
 
  const filterRed = screen.getByRole('button', { name: 'Электроника' });
- expect(filterRed.getAttribute('data-color')).toBe('#5A7BA6');
+ expect(filterRed.getAttribute('data-color')).toBe('#7FAFE2');
  expect(filterRed.style.backgroundColor).not.toBe('');
 
  const filterNeutral = screen.getByRole('button', { name: 'Книги' });
@@ -155,7 +155,7 @@ describe('цветные чипы', () => {
 
  const giftChips = screen.getByLabelText('Категории подарка');
  const coloredChip = within(giftChips).getByText('Электроника');
- expect(coloredChip.getAttribute('data-color')).toBe('#5A7BA6');
+ expect(coloredChip.getAttribute('data-color')).toBe('#7FAFE2');
  expect(coloredChip.style.backgroundColor).not.toBe('');
  const neutralChip = within(giftChips).getByText('Книги');
  expect(neutralChip.getAttribute('data-color')).toBe('none');
@@ -173,7 +173,7 @@ describe('цветные чипы', () => {
  fireEvent.click(screen.getByRole('button', { name: 'Редактировать подарок' }));
 
  const assigned = await screen.findByRole('button', { name: 'Снять категорию «Электроника»' });
- expect(assigned.getAttribute('data-color')).toBe('#5A7BA6');
+ expect(assigned.getAttribute('data-color')).toBe('#7FAFE2');
  expect(assigned.style.backgroundColor).not.toBe('');
 
  const available = screen.getByRole('button', { name: 'Добавить категорию «Книги»' });
@@ -199,11 +199,11 @@ describe('цветные чипы', () => {
  await screen.findByText('Наушники');
 
  const filterRed = screen.getByRole('button', { name: 'Электроника' });
- expect(filterRed.getAttribute('data-color')).toBe('#5A7BA6');
+ expect(filterRed.getAttribute('data-color')).toBe('#7FAFE2');
  expect(filterRed.style.backgroundColor).not.toBe('');
 
  const giftChips = screen.getByLabelText('Категории подарка');
- expect(within(giftChips).getByText('Электроника').getAttribute('data-color')).toBe('#5A7BA6');
+ expect(within(giftChips).getByText('Электроника').getAttribute('data-color')).toBe('#7FAFE2');
  expect(within(giftChips).getByText('Книги').getAttribute('data-color')).toBe('none');
  });
 });

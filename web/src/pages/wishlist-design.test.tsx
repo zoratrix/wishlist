@@ -15,7 +15,7 @@ beforeEach(() => {
  URL.revokeObjectURL = vi.fn() as unknown as typeof URL.revokeObjectURL;
 });
 
-const THEME = '#5A7BA6';
+const THEME = '#7FAFE2';
 
 function settingsApi(initial = makeWishlist({ id: 'list-1' })) {
  let wishlist = initial;

@@ -14,7 +14,7 @@ const BASE = [
 ].join(' ');
 
 const VARIANTS: Record<ButtonVariant, string> = {
-  primary: 'border-ink bg-accent text-ink nb-accent-shadow hover:bg-[#eed95f]',
+  primary: 'border-ink bg-accent text-ink nb-accent-shadow hover:brightness-95',
   secondary: 'border-ink bg-card text-ink hover:bg-paper',
   ghost: 'border-ink bg-transparent text-ink hover:bg-paper',
   danger: 'border-ink bg-danger-soft text-danger hover:bg-powder-soft',

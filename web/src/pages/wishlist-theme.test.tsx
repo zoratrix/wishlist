@@ -12,7 +12,7 @@ import {
 import type { ApiCall } from '../test/helpers';
 import type { WishlistSummaryDTO } from '../lib/types';
 
-const THEME = '#5A7BA6';
+const THEME = '#7FAFE2';
 const EMOJI = '🎁';
 const PUBLIC_EMOJI = '📚';
 
