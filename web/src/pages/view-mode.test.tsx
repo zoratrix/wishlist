@@ -10,6 +10,7 @@ import {
  renderApp,
  stubWideScreen,
  TEST_USER,
+ GUEST_VIEWER,
 } from '../test/helpers';
 
 const editorGifts: GiftDTO[] = [
@@ -33,6 +34,7 @@ function mockPublicApi() {
  return mockApi({
  'GET /api/w/token-1': () => ({
  body: {
+ viewer: GUEST_VIEWER,
  wishlist: makePublicWishlist(),
  gifts: [makeGift({ id: 'g1', title: 'Наушники', priceMinor: 2999000 })],
  },

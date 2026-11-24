@@ -7,6 +7,7 @@ import {
  mockApi,
  renderApp,
  TEST_USER,
+ GUEST_VIEWER,
 } from '../test/helpers';
 
 beforeEach(() => {
@@ -92,6 +93,7 @@ describe('обложка и тема на публичной странице и
  'GET /api/auth/me': () => ({ body: { user: null } }),
  'GET /api/w/token-1': () => ({
  body: {
+ viewer: GUEST_VIEWER,
  wishlist: makePublicWishlist({
  coverPath: '/uploads/covers/c1.webp',
  themeColor: THEME,

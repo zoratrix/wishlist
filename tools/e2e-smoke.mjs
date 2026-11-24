@@ -164,6 +164,19 @@ check(
 );
 check('гость видит 2 подарка', publicView.json?.gifts?.length === 2, String(publicView.json?.gifts?.length));
 check('свободный подарок без брони', publicView.json?.gifts?.[0]?.booking === null);
+check(
+  'viewer гостя: не владелец, не подписан, подписка недоступна',
+  publicView.json?.viewer?.isSelf === false &&
+    publicView.json?.viewer?.isFollowing === false &&
+    publicView.json?.viewer?.canFollow === false,
+  JSON.stringify(publicView.json?.viewer),
+);
+const ownerPublicView = await req(owner, 'GET', `/api/w/${shareToken}`);
+check(
+  'viewer владельца: isSelf = true',
+  ownerPublicView.json?.viewer?.isSelf === true && ownerPublicView.json?.viewer?.canFollow === false,
+  JSON.stringify(ownerPublicView.json?.viewer),
+);
 
 const book = await req(null, 'POST', `/api/w/${shareToken}/gifts/${giftId}/book`, {
   name: 'Мария',
@@ -331,6 +344,12 @@ const followersWishlist = await req(owner, 'POST', '/api/me/wishlists', {
 });
 const followersToken = followersWishlist.json?.wishlist?.shareToken;
 check('создан followers-вишлист', followersWishlist.status === 201, `status=${followersWishlist.status}`);
+const notFollowerView = await req(other, 'GET', `/api/w/${shareToken}`);
+check(
+  'viewer залогиненного не-подписчика: canFollow = true',
+  notFollowerView.json?.viewer?.canFollow === true && notFollowerView.json?.viewer?.isFollowing === false,
+  JSON.stringify(notFollowerView.json?.viewer),
+);
 check(
   'гость не видит followers-список',
   (await req(guest, 'GET', `/api/w/${followersToken}`)).status === 404,
@@ -345,9 +364,13 @@ const followAgain = await req(other, 'POST', `/api/users/${ownerUsername}/follow
 check('подписка идемпотентна', followAgain.status === 200 && followAgain.json?.isFollowing === true);
 const profileAsFollower = await req(other, 'GET', `/api/users/${ownerUsername}`);
 check('viewer.isFollowing = true', profileAsFollower.json?.viewer?.isFollowing === true);
+const followerWishlistView = await req(other, 'GET', `/api/w/${followersToken}`);
+check('подписчик видит followers-список', followerWishlistView.status === 200);
 check(
-  'подписчик видит followers-список',
-  (await req(other, 'GET', `/api/w/${followersToken}`)).status === 200,
+  'viewer подписчика на followers-списке: isFollowing = true',
+  followerWishlistView.json?.viewer?.isFollowing === true &&
+    followerWishlistView.json?.viewer?.canFollow === false,
+  JSON.stringify(followerWishlistView.json?.viewer),
 );
 const followersList = await req(owner, 'GET', '/api/me/followers');
 check(

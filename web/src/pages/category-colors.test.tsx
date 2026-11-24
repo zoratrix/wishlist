@@ -9,6 +9,7 @@ import {
  mockEditorGifts,
  renderApp,
  TEST_USER,
+ GUEST_VIEWER,
 } from '../test/helpers';
 
 const red = makeCategory('c1', 'Электроника', '#5A7BA6');
@@ -183,6 +184,7 @@ describe('цветные чипы', () => {
  mockApi({
  'GET /api/w/token-1': () => ({
  body: {
+ viewer: GUEST_VIEWER,
  wishlist: makePublicWishlist(),
  gifts: [
  makeGift({ id: 'g1', title: 'Наушники', categories: [red, neutral] }),

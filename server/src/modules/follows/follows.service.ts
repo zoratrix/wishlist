@@ -3,7 +3,7 @@ import { AppError, NotFoundError } from '../../errors.ts';
 import { newId } from '../../lib/crypto.ts';
 import { isUniqueConstraintError } from '../../lib/db-errors.ts';
 import { toFollowUserDTO } from '../../lib/dto.ts';
-import type { FollowCounts, FollowUserDTO } from '../../lib/dto.ts';
+import type { FollowCounts, FollowUserDTO, ProfileViewerDTO } from '../../lib/dto.ts';
 import type { FollowUserRow, UserRow } from '../../lib/rows.ts';
 
 /** Подписан ли `followerId` на `followingId`. */
@@ -13,6 +13,19 @@ export function isFollowing(followerId: string, followingId: string): boolean {
       .prepare('SELECT 1 AS found FROM follows WHERE follower_id = ? AND following_id = ?')
       .get(followerId, followingId) !== undefined
   );
+}
+
+/**
+ * Отношение смотрящего к профилю — одно правило для публичного профиля и
+ * гостевой страницы вишлиста: isSelf, уже подписан, можно ли подписаться.
+ * Подписка возможна только при входе, не на себя и только на открытый профиль.
+ */
+export function getProfileViewer(profile: UserRow, viewerId: string | null): ProfileViewerDTO {
+  const isSelf = viewerId !== null && viewerId === profile.id;
+  const isFollowingViewer = viewerId !== null && !isSelf && isFollowing(viewerId, profile.id);
+  const canFollow =
+    viewerId !== null && !isSelf && profile.is_profile_public === 1 && !isFollowingViewer;
+  return { isSelf, isFollowing: isFollowingViewer, canFollow };
 }
 
 /** Счётчики подписок — только для UserSelfDTO (владелец аккаунта). */

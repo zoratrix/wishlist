@@ -182,6 +182,8 @@ export interface PublicWishlistResponse {
   wishlist: PublicWishlist;
   gifts: GiftDTO[];
   categories: CategoryDTO[];
+  /** Отношение смотрящего к владельцу списка — для кнопок «Профиль» и «Подписаться». */
+  viewer: ProfileViewer;
 }
 
 export interface CategoryResponse {

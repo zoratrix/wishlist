@@ -11,6 +11,7 @@ import {
  mockEditorGifts,
  renderApp,
  renderedGiftIds,
+ GUEST_VIEWER,
 } from '../test/helpers';
 
 const electronics = makeCategory('c1', 'Электроника');
@@ -167,6 +168,7 @@ describe('сортировка на публичной странице', () => 
  mockApi({
  'GET /api/w/token-1': () => ({
  body: {
+ viewer: GUEST_VIEWER,
  wishlist: makePublicWishlist(),
  gifts,
  categories: [electronics, books],

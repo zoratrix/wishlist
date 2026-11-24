@@ -2,11 +2,10 @@ import { Router } from 'express';
 import type { NextFunction, Request, Response } from 'express';
 import { AppError, NotFoundError } from '../../errors.ts';
 import { toUserPublicDTO, toUserSelfDTO } from '../../lib/dto.ts';
-import type { ProfileViewerDTO } from '../../lib/dto.ts';
 import { parseBody, pathParam } from '../../lib/http.ts';
 import { getViewer, requireViewer } from '../../lib/session.ts';
 import { removeStoredImage, saveResizedImage, uploadImage } from '../../lib/uploads.ts';
-import { getUserFollowCounts, isFollowing } from '../follows/follows.service.ts';
+import { getProfileViewer, getUserFollowCounts } from '../follows/follows.service.ts';
 import { listProfileWishlists } from '../wishlists/wishlists.service.ts';
 import { profileUpdateSchema } from './users.schemas.ts';
 import { findUserByUsername, setUserAvatar, updateUserProfile } from './users.service.ts';
@@ -51,24 +50,16 @@ usersRouter.get('/users/:username', (req: Request, res: Response) => {
   const profile = findUserByUsername(pathParam(req, 'username'));
   if (profile === null) throw new NotFoundError();
 
-  const isSelf = viewer !== null && viewer.user.id === profile.id;
+  const profileViewer = getProfileViewer(profile, viewer?.user.id ?? null);
   // Закрытый профиль виден только владельцу; остальным — 404, не 403.
-  if (!isSelf && profile.is_profile_public !== 1) throw new NotFoundError();
-
-  const viewerIsFollowing =
-    viewer !== null && !isSelf ? isFollowing(viewer.user.id, profile.id) : false;
-  // canFollow: есть вход, это не свой профиль, профиль открыт и ещё не подписан.
-  const canFollow = viewer !== null && !isSelf && profile.is_profile_public === 1 && !viewerIsFollowing;
-
-  const profileViewer: ProfileViewerDTO = {
-    isSelf,
-    isFollowing: viewerIsFollowing,
-    canFollow,
-  };
+  if (!profileViewer.isSelf && profile.is_profile_public !== 1) throw new NotFoundError();
 
   res.status(200).json({
     user: toUserPublicDTO(profile),
-    wishlists: listProfileWishlists(profile.id, { isOwner: isSelf, isFollower: viewerIsFollowing }),
+    wishlists: listProfileWishlists(profile.id, {
+      isOwner: profileViewer.isSelf,
+      isFollower: profileViewer.isFollowing,
+    }),
     viewer: profileViewer,
   });
 });

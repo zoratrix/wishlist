@@ -203,7 +203,7 @@ backend и frontend. Дополняет `docs/API.md` (общие правила
 
 | Метод | Путь | Тело | Ответ |
 |---|---|---|---|
-| GET | `/api/w/:shareToken` | — | `200 { wishlist: {id,title,description,eventDate,visibility,owner:{username,displayName,isProfilePublic}}, gifts: GiftDTO[], categories: CategoryDTO[] }` |
+| GET | `/api/w/:shareToken` | — | `200 { wishlist: {id,title,description,eventDate,visibility,owner:{username,displayName,isProfilePublic}}, gifts: GiftDTO[], categories: CategoryDTO[], viewer: {isSelf,isFollowing,canFollow} }` |
 | POST | `/api/w/:shareToken/gifts/:giftId/book` | `{name, email}` | `201 { booking: { createdAt } }` |
 | POST | `/api/w/:shareToken/gifts/:giftId/unbook` | `{email}` | `200 { ok: true }` |
 
@@ -212,6 +212,11 @@ backend и frontend. Дополняет `docs/API.md` (общие правила
 ссылка не даёт доступа; гость → `404`). Несуществующий/недоступный токен →
 `404 NOT_FOUND` (без пояснений). Владелец, смотрящий свою ссылку
 неавторизованным, получает гостевой вид.
+
+`viewer` в ответе — отношение смотрящего к владельцу списка (те же правила,
+что у `viewer` в `GET /api/users/:username`): `isSelf`, `isFollowing`,
+`canFollow`. Нужен клиенту для кнопок «Профиль» и «Подписаться» в шапке
+публичного вишлиста. У закрытого профиля владельца `canFollow=false`.
 
 ### Бронирование
 1. Проверки: вишлист доступен; подарок принадлежит ему; `status = available`;

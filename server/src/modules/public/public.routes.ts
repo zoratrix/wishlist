@@ -9,6 +9,7 @@ import { findUserById, getViewer } from '../../lib/session.ts';
 import { bookGift, unbookGift } from '../bookings/bookings.service.ts';
 import { bookSchema, unbookSchema } from '../bookings/bookings.schemas.ts';
 import { listWishlistCategories } from '../categories/categories.service.ts';
+import { getProfileViewer } from '../follows/follows.service.ts';
 import { findGiftInWishlist, listGiftRows, toGuestGiftDTOs } from '../gifts/gifts.service.ts';
 import { canViewWishlist, findWishlistByShareToken } from '../wishlists/wishlists.service.ts';
 
@@ -44,6 +45,8 @@ publicRouter.get('/w/:shareToken', (req: Request, res: Response) => {
     wishlist: toWishlistPublicDTO(wishlist, owner),
     gifts: toGuestGiftDTOs(listGiftRows(wishlist.id)),
     categories: listWishlistCategories(wishlist.id),
+    // Отношение смотрящего к владельцу — те же правила, что у публичного профиля.
+    viewer: getProfileViewer(owner, getViewer(res)?.user.id ?? null),
   });
 });
 

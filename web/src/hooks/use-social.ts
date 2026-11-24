@@ -32,6 +32,8 @@ export function useFollowToggle(username: string) {
           : { ...current, viewer: { ...current.viewer, isFollowing: data.isFollowing } },
       );
       void queryClient.invalidateQueries({ queryKey: ['profile', username] });
+      // Публичный вишлист показывает подписку в шапке — обновляем и его.
+      void queryClient.invalidateQueries({ queryKey: ['public-wishlist'] });
       void queryClient.invalidateQueries({ queryKey: ['followers'] });
       void queryClient.invalidateQueries({ queryKey: ['following'] });
       void queryClient.invalidateQueries({ queryKey: meQueryKey });

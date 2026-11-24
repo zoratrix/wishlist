@@ -9,6 +9,7 @@ import {
  renderApp,
  stubMobileScreen,
  stubWideScreen,
+ GUEST_VIEWER,
 } from '../test/helpers';
 
 const electronics = makeCategory('c1', 'Электроника');
@@ -161,6 +162,7 @@ describe('иконка редактирования и модалка', () => {
  mockApi({
  'GET /api/w/token-1': () => ({
  body: {
+ viewer: GUEST_VIEWER,
  wishlist: makePublicWishlist(),
  gifts: [makeGift({ id: 'g1', title: 'Наушники' })],
  categories: [],

@@ -7,6 +7,7 @@ import {
  mockEditorGifts,
  renderApp,
  stubWideScreen,
+ GUEST_VIEWER,
 } from '../test/helpers';
 
 const SIX_LINKS = [
@@ -136,6 +137,7 @@ describe('квадратные кнопки ссылок', () => {
  mockApi({
  'GET /api/w/token-1': () => ({
  body: {
+ viewer: GUEST_VIEWER,
  wishlist: makePublicWishlist(),
  gifts: [makeGift({ id: 'g1', title: 'Наушники', links: SIX_LINKS })],
  categories: [],
@@ -161,6 +163,7 @@ describe('ссылки в описании кликабельны', () => {
  mockApi({
  'GET /api/w/token-1': () => ({
  body: {
+ viewer: GUEST_VIEWER,
  wishlist: makePublicWishlist({
  description: 'Подробности на https://ozon.ru/list.\nСпасибо!',
  }),

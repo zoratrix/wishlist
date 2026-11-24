@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { apiGet, ApiError } from '../lib/api';
+import { apiGet, ApiError, errorMessage } from '../lib/api';
 import type { GiftDTO, PublicWishlistResponse } from '../lib/types';
 import { formatDate, giftsCountLabel } from '../lib/format';
 import { forgetBooking, getBookingsForToken, rememberBooking } from '../lib/my-bookings';
@@ -11,6 +11,7 @@ import type { CategoryFilter } from '../lib/categories';
 import { sortGifts } from '../lib/sort';
 import { useAuth } from '../hooks/use-auth';
 import { useGiftSort } from '../hooks/use-gift-sort';
+import { useFollowToggle } from '../hooks/use-social';
 import { useViewMode } from '../hooks/use-view-mode';
 import { BookGiftModal, UnbookGiftModal } from '../components/booking-modals';
 import { Button, buttonClasses } from '../components/button';
@@ -22,6 +23,7 @@ import { LinkifiedText } from '../components/linkified-text';
 import { Notice } from '../components/notice';
 import { SiteHeader } from '../components/site-header';
 import { SortSelect } from '../components/sort-select';
+import { UserAvatar } from '../components/user-avatar';
 import { ViewModeSwitch } from '../components/view-mode-switch';
 import { WishlistHero } from '../components/wishlist-hero';
 import { WishlistTheme } from '../components/wishlist-theme';
@@ -59,6 +61,7 @@ export default function PublicListPage() {
  const [giftToBook, setGiftToBook] = useState<GiftDTO | null>(null);
  const [giftToUnbook, setGiftToUnbook] = useState<GiftDTO | null>(null);
  const [notice, setNotice] = useState<PageNotice | null>(null);
+ const [followError, setFollowError] = useState<string | null>(null);
  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
 
  const query = useQuery<PublicWishlistResponse, ApiError>({
@@ -66,6 +69,10 @@ export default function PublicListPage() {
  queryFn: () => apiGet<PublicWishlistResponse>(`/w/${encodeURIComponent(token)}`),
  enabled: token !== '',
  });
+
+ // Подписка на владельца: кнопка появляется только когда данные уже загружены.
+ const ownerUsername = query.data?.wishlist.owner.username ?? '';
+ const follow = useFollowToggle(ownerUsername);
 
  const myBookings = getBookingsForToken(token);
 
@@ -151,7 +158,7 @@ export default function PublicListPage() {
  );
  }
 
- const { wishlist, gifts } = query.data;
+ const { wishlist, gifts, viewer } = query.data;
  const categories = query.data.categories ?? [];
  const activeFilter = resolveCategoryFilter(categoryFilter, categories);
  const visibleGifts = sortGifts(filterGifts(gifts, activeFilter), sort);
@@ -180,6 +187,27 @@ export default function PublicListPage() {
  },
  };
 
+ const isGuest = me === null;
+ // «Профиль» виден всем, если профиль владельца открыт; владельцу — всегда.
+ const canSeeProfile = wishlist.owner.isProfilePublic || viewer.isSelf;
+ // Гость подписывается только через вход; подписаться нельзя, если профиль закрыт.
+ const showLoginLink = isGuest && wishlist.owner.isProfilePublic;
+ // Залогиненный не-владелец: подписка (canFollow) или отписка (isFollowing).
+ const showFollowButton =
+ !isGuest &&
+ !viewer.isSelf &&
+ wishlist.owner.isProfilePublic &&
+ (viewer.canFollow || viewer.isFollowing);
+
+ async function handleFollow() {
+ setFollowError(null);
+ try {
+ await follow.mutateAsync(viewer.isFollowing ? 'unfollow' : 'follow');
+ } catch (error) {
+ setFollowError(errorMessage(error));
+ }
+ }
+
  return (
  <WishlistTheme
  themeColor={wishlist.themeColor ?? null}
@@ -203,12 +231,64 @@ export default function PublicListPage() {
  className="mt-2 break-words text-sm font-medium text-muted"
  />
  ) : null}
+ <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
+ <UserAvatar
+ name={wishlist.owner.displayName}
+ username={wishlist.owner.username}
+ size="sm"
+ />
+ <div className="min-w-0">
+ <p className="truncate text-sm font-semibold text-ink">
+ {wishlist.owner.displayName}
+ </p>
+ <p className="truncate text-xs font-medium text-muted">
+ @{wishlist.owner.username}
+ </p>
+ </div>
+ <div className="flex w-full flex-wrap items-center gap-2 sm:ml-auto sm:w-auto">
+ {canSeeProfile ? (
+ <Link
+ to={`/u/${encodeURIComponent(wishlist.owner.username)}`}
+ className={buttonClasses('secondary', 'sm')}
+ >
+ Профиль
+ </Link>
+ ) : null}
+ {showLoginLink ? (
+ <Link
+ to="/login"
+ state={{ from: location.pathname }}
+ className={buttonClasses('primary', 'sm')}
+ >
+ Подписаться
+ </Link>
+ ) : null}
+ {showFollowButton ? (
+ <Button
+ size="sm"
+ variant={viewer.isFollowing ? 'secondary' : 'primary'}
+ loading={follow.isPending}
+ onClick={() => void handleFollow()}
+ >
+ {viewer.isFollowing ? 'Вы подписаны' : 'Подписаться'}
+ </Button>
+ ) : null}
+ </div>
+ </div>
+ {meta ? (
  <p className="mt-2 text-[11px] font-bold uppercase tracking-wide text-muted">
- {wishlist.owner.displayName} · @{wishlist.owner.username}
- {meta ? ' · ' : ''}
  {meta}
  </p>
+ ) : null}
  </WishlistHero>
+
+ {followError ? (
+ <div className="mt-4">
+ <Notice kind="error" onClose={() => setFollowError(null)}>
+ {followError}
+ </Notice>
+ </div>
+ ) : null}
 
  {notice ? (
  <div className="mt-4">

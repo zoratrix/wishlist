@@ -8,6 +8,7 @@ import {
  mockEditorGifts,
  renderApp,
  stubWideScreen,
+ GUEST_VIEWER,
 } from '../test/helpers';
 
 const electronics = makeCategory('c1', 'Электроника');
@@ -208,6 +209,7 @@ describe('категории: публичная страница', () => {
  mockApi({
  'GET /api/w/token-1': () => ({
  body: {
+ viewer: GUEST_VIEWER,
  wishlist: makePublicWishlist(),
  gifts: [
  makeGift({ id: 'g1', title: 'Наушники', categories: [electronics] }),
@@ -242,6 +244,7 @@ describe('категории: публичная страница', () => {
  mockApi({
  'GET /api/w/token-1': () => ({
  body: {
+ viewer: GUEST_VIEWER,
  wishlist: makePublicWishlist(),
  gifts: [makeGift({ id: 'g1', title: 'Наушники' })],
  categories: [],

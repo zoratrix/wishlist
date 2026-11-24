@@ -3,7 +3,14 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import type { GiftDTO } from '../lib/types';
 import { MY_BOOKINGS_KEY, rememberBooking } from '../lib/my-bookings';
 import type { MyBookingRecord } from '../lib/my-bookings';
-import { makeGift, makePublicWishlist, mockApi, renderApp } from '../test/helpers';
+import {
+ GUEST_VIEWER,
+ makeGift,
+ makePublicWishlist,
+ mockApi,
+ renderApp,
+ TEST_USER,
+} from '../test/helpers';
 
 function readStoredBookings(): MyBookingRecord[] {
  const raw = window.localStorage.getItem(MY_BOOKINGS_KEY);
@@ -29,7 +36,7 @@ describe('публичная страница вишлиста', () => {
  ];
 
  mockApi({
- 'GET /api/w/token-1': () => ({ body: { wishlist: makePublicWishlist(), gifts } }),
+ 'GET /api/w/token-1': () => ({ body: { wishlist: makePublicWishlist(), gifts, viewer: GUEST_VIEWER } }),
  });
 
  renderApp('/w/token-1');
@@ -48,7 +55,7 @@ describe('публичная страница вишлиста', () => {
  ];
 
  const { calls } = mockApi({
- 'GET /api/w/token-1': () => ({ body: { wishlist: makePublicWishlist(), gifts } }),
+ 'GET /api/w/token-1': () => ({ body: { wishlist: makePublicWishlist(), gifts, viewer: GUEST_VIEWER } }),
  'POST /api/w/token-1/gifts/g1/book': () => {
  gifts = gifts.map((gift) =>
  gift.id === 'g1' ? { ...gift, booking: { status: 'booked' } } : gift,
@@ -107,7 +114,7 @@ describe('публичная страница вишлиста', () => {
  ];
 
  mockApi({
- 'GET /api/w/token-1': () => ({ body: { wishlist: makePublicWishlist(), gifts } }),
+ 'GET /api/w/token-1': () => ({ body: { wishlist: makePublicWishlist(), gifts, viewer: GUEST_VIEWER } }),
  });
 
  renderApp('/w/token-1');
@@ -138,7 +145,7 @@ describe('публичная страница вишлиста', () => {
  let gifts: GiftDTO[] = [makeGift({ id: 'g1', title: 'Наушники' })];
 
  mockApi({
- 'GET /api/w/token-1': () => ({ body: { wishlist: makePublicWishlist(), gifts } }),
+ 'GET /api/w/token-1': () => ({ body: { wishlist: makePublicWishlist(), gifts, viewer: GUEST_VIEWER } }),
  'POST /api/w/token-1/gifts/g1/book': () => {
  gifts = gifts.map((gift) =>
  gift.id === 'g1' ? { ...gift, booking: { status: 'booked' } } : gift,
@@ -184,7 +191,7 @@ describe('публичная страница вишлиста', () => {
  ];
 
  const { calls } = mockApi({
- 'GET /api/w/token-1': () => ({ body: { wishlist: makePublicWishlist(), gifts } }),
+ 'GET /api/w/token-1': () => ({ body: { wishlist: makePublicWishlist(), gifts, viewer: GUEST_VIEWER } }),
  'POST /api/w/token-1/gifts/g1/unbook': () => {
  gifts = [makeGift({ id: 'g1', title: 'Наушники' })];
  return { body: { ok: true } };
@@ -219,6 +226,7 @@ describe('публичная страница вишлиста', () => {
  mockApi({
  'GET /api/w/token-1': () => ({
  body: {
+ viewer: GUEST_VIEWER,
  wishlist: makePublicWishlist(),
  gifts: [makeGift({ id: 'g1', title: 'Наушники' })],
  },
@@ -248,7 +256,7 @@ describe('публичная страница вишлиста', () => {
  ];
 
  mockApi({
- 'GET /api/w/token-1': () => ({ body: { wishlist: makePublicWishlist(), gifts } }),
+ 'GET /api/w/token-1': () => ({ body: { wishlist: makePublicWishlist(), gifts, viewer: GUEST_VIEWER } }),
  });
 
  renderApp('/w/token-1');
@@ -258,5 +266,138 @@ describe('публичная страница вишлиста', () => {
  expect(screen.getByText('Занят')).toBeTruthy();
  // «Забронировано вами» без хранилища невозможно — и это не ломает страницу.
  expect(screen.queryByText('Забронировано вами')).toBeNull();
+ });
+});
+
+describe('владелец в шапке публичного вишлиста', () => {
+ it('гостю показывает «Профиль» на /u/anna и «Подписаться» на /login', async () => {
+ mockApi({
+ 'GET /api/auth/me': () => ({ body: { user: null } }),
+ 'GET /api/w/token-1': () => ({
+ body: {
+ viewer: GUEST_VIEWER,
+ wishlist: makePublicWishlist(),
+ gifts: [makeGift({ id: 'g1', title: 'Наушники' })],
+ categories: [],
+ },
+ }),
+ });
+
+ renderApp('/w/token-1');
+ await screen.findByText('Наушники');
+
+ expect(screen.getByText('Анна')).toBeTruthy();
+ expect(screen.getByText('@anna')).toBeTruthy();
+
+ const profile = screen.getByRole('link', { name: 'Профиль' });
+ expect(profile.getAttribute('href')).toBe('/u/anna');
+
+ const follow = screen.getByRole('link', { name: 'Подписаться' });
+ expect(follow.getAttribute('href')).toBe('/login');
+ // Гость не отправляет мутацию — только ссылка на вход.
+ expect(screen.queryByRole('button', { name: 'Подписаться' })).toBeNull();
+ });
+
+ it('залогиненный подписывается и отписывается, список обновляется повторным GET', async () => {
+ let isFollowing = false;
+ let listRequests = 0;
+
+ const { calls } = mockApi({
+ 'GET /api/auth/me': () => ({ body: { user: TEST_USER } }),
+ 'GET /api/w/token-1': () => {
+ listRequests += 1;
+ return {
+ body: {
+ viewer: { isSelf: false, isFollowing, canFollow: !isFollowing },
+ wishlist: makePublicWishlist(),
+ gifts: [makeGift({ id: 'g1', title: 'Наушники' })],
+ categories: [],
+ },
+ };
+ },
+ 'POST /api/users/anna/follow': () => {
+ isFollowing = true;
+ return { body: { isFollowing: true } };
+ },
+ 'DELETE /api/users/anna/follow': () => {
+ isFollowing = false;
+ return { body: { isFollowing: false } };
+ },
+ });
+
+ renderApp('/w/token-1');
+ await screen.findByText('Наушники');
+
+ fireEvent.click(screen.getByRole('button', { name: 'Подписаться' }));
+ expect(await screen.findByRole('button', { name: 'Вы подписаны' })).toBeTruthy();
+ expect(
+ calls.some((call) => call.method === 'POST' && call.path === '/api/users/anna/follow'),
+ ).toBe(true);
+
+ // После инвалидации кэша страница перезапрашивает список.
+ const afterFollow = listRequests;
+ expect(afterFollow).toBeGreaterThan(1);
+
+ fireEvent.click(screen.getByRole('button', { name: 'Вы подписаны' }));
+ expect(await screen.findByRole('button', { name: 'Подписаться' })).toBeTruthy();
+ expect(
+ calls.some((call) => call.method === 'DELETE' && call.path === '/api/users/anna/follow'),
+ ).toBe(true);
+ expect(listRequests).toBeGreaterThan(afterFollow);
+ });
+
+ it('в своём списке «Профиль» есть, кнопки подписки нет', async () => {
+ mockApi({
+ 'GET /api/auth/me': () => ({ body: { user: TEST_USER } }),
+ 'GET /api/w/token-1': () => ({
+ body: {
+ viewer: { isSelf: true, isFollowing: false, canFollow: false },
+ wishlist: makePublicWishlist(),
+ gifts: [makeGift({ id: 'g1', title: 'Наушники' })],
+ categories: [],
+ },
+ }),
+ });
+
+ renderApp('/w/token-1');
+ await screen.findByText('Наушники');
+
+ const profile = screen
+ .getAllByRole('link', { name: 'Профиль' })
+ .find((link) => link.getAttribute('href') === '/u/anna');
+ expect(profile).toBeTruthy();
+ expect(screen.queryByRole('button', { name: 'Подписаться' })).toBeNull();
+ expect(screen.queryByRole('button', { name: 'Вы подписаны' })).toBeNull();
+ expect(screen.queryByRole('link', { name: 'Подписаться' })).toBeNull();
+ });
+
+ it('закрытый профиль владельца: кнопок нет, имя видно', async () => {
+ mockApi({
+ 'GET /api/auth/me': () => ({ body: { user: TEST_USER } }),
+ 'GET /api/w/token-1': () => ({
+ body: {
+ viewer: { isSelf: false, isFollowing: false, canFollow: false },
+ wishlist: makePublicWishlist({
+ owner: { username: 'bob', displayName: 'Борис', isProfilePublic: false },
+ }),
+ gifts: [makeGift({ id: 'g1', title: 'Наушники' })],
+ categories: [],
+ },
+ }),
+ });
+
+ renderApp('/w/token-1');
+ await screen.findByText('Наушники');
+
+ expect(screen.getByText('Борис')).toBeTruthy();
+ expect(screen.getByText('@bob')).toBeTruthy();
+
+ const profileToBob = screen
+ .queryAllByRole('link', { name: 'Профиль' })
+ .some((link) => link.getAttribute('href') === '/u/bob');
+ expect(profileToBob).toBe(false);
+ expect(screen.queryByRole('button', { name: 'Подписаться' })).toBeNull();
+ expect(screen.queryByRole('button', { name: 'Вы подписаны' })).toBeNull();
+ expect(screen.queryByRole('link', { name: 'Подписаться' })).toBeNull();
  });
 });

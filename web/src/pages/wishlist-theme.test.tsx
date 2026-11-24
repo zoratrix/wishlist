@@ -7,6 +7,7 @@ import {
  mockApi,
  renderApp,
  TEST_USER,
+ GUEST_VIEWER,
 } from '../test/helpers';
 import type { ApiCall } from '../test/helpers';
 import type { WishlistSummaryDTO } from '../lib/types';
@@ -166,6 +167,7 @@ describe('оформление страницы вишлиста: тема и э
  'GET /api/auth/me': () => ({ body: { user: null } }),
  'GET /api/w/token-1': () => ({
  body: {
+ viewer: GUEST_VIEWER,
  wishlist: makePublicWishlist({
  themeColor: THEME,
  themeEmoji: PUBLIC_EMOJI,
@@ -219,6 +221,7 @@ describe('оформление страницы вишлиста: тема и э
  'GET /api/auth/me': () => ({ body: { user: null } }),
  'GET /api/w/token-1': () => ({
  body: {
+ viewer: GUEST_VIEWER,
  wishlist: makePublicWishlist({ themeColor: THEME, themeEmoji: null }),
  gifts: [makeGift({ id: 'g1', title: 'Наушники' })],
  categories: [],

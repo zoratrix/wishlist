@@ -121,6 +121,8 @@ Docker-контейнер отдаёт HTTP на `:3000`, а сертифика�
 
 ## 8. Полезные команды
 
+> Что нового в каждой версии и как обновляться — см. [docs/UPDATES.md](docs/UPDATES.md).
+
 ```bash
 docker compose ps                     # статус
 docker compose logs -f app            # логи приложения

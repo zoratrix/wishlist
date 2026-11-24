@@ -5,6 +5,7 @@ import { vi } from 'vitest';
 import type {
  CategoryDTO,
  GiftDTO,
+ ProfileViewer,
  PublicWishlist,
  UserSelfDTO,
  WishlistSummaryDTO,
@@ -126,6 +127,13 @@ export const TEST_USER: UserSelfDTO = {
  showBirthYear: true,
  isProfilePublic: true,
  createdAt: '2026-11-12T09:00:00.000Z',
+};
+
+/** Гость: не владелец, не подписчик и не может подписаться. */
+export const GUEST_VIEWER: ProfileViewer = {
+ isSelf: false,
+ isFollowing: false,
+ canFollow: false,
 };
 
 export function makeWishlist(overrides: Partial<WishlistSummaryDTO> = {}): WishlistSummaryDTO {

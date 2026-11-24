@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { screen, within } from '@testing-library/react';
-import { makeGift, makePublicWishlist, mockApi, renderApp, TEST_USER } from '../test/helpers';
+import {
+ GUEST_VIEWER,
+ makeGift,
+ makePublicWishlist,
+ mockApi,
+ renderApp,
+ TEST_USER,
+} from '../test/helpers';
 
 describe('единый хедер', () => {
  it('на публичном профиле: 3 пункта меню, аватар и имя, нижние вкладки', async () => {
@@ -48,6 +55,7 @@ describe('единый хедер', () => {
  'GET /api/auth/me': () => ({ body: { user: TEST_USER } }),
  'GET /api/w/token-1': () => ({
  body: {
+ viewer: GUEST_VIEWER,
  wishlist: makePublicWishlist(),
  gifts: [makeGift({ id: 'g1', title: 'Наушники' })],
  categories: [],
@@ -69,6 +77,7 @@ describe('единый хедер', () => {
  'GET /api/auth/me': () => ({ body: { user: null } }),
  'GET /api/w/token-1': () => ({
  body: {
+ viewer: GUEST_VIEWER,
  wishlist: makePublicWishlist(),
  gifts: [makeGift({ id: 'g1', title: 'Наушники' })],
  categories: [],
