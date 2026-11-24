@@ -54,7 +54,7 @@ export function GiftTableView({ gifts, adapter }: GiftViewProps) {
  <div
  key={gift.id}
  data-gift-id={gift.id}
- className="overflow-hidden rounded-2xl border border-line bg-card transition-shadow "
+ className="overflow-hidden rounded-2xl border border-ink bg-card transition-shadow "
  >
  <div className="flex min-h-16 items-center gap-3 px-3 py-2.5">
  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-line bg-butter-soft text-xs font-semibold tabular-nums text-ink">
@@ -81,7 +81,7 @@ export function GiftTableView({ gifts, adapter }: GiftViewProps) {
  return (
  <div
  data-view="table"
- className="overflow-x-auto rounded-2xl border border-line bg-card"
+ className="overflow-x-auto rounded-2xl border border-ink bg-card"
  >
  <table className="w-full table-fixed border-collapse text-left">
  <thead>

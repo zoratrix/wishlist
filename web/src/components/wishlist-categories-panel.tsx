@@ -149,7 +149,7 @@ export function WishlistCategoriesPanel({
  }
 
  return (
- <section className="mt-6 rounded-2xl border border-line bg-card p-4">
+ <section className="mt-6 rounded-2xl border border-ink bg-card p-4">
  <div className="flex flex-wrap items-center gap-2">
  <CategoryFilterChips categories={categories} value={filter} onChange={onFilterChange} />
  <div className="ml-auto flex flex-wrap items-center gap-2">

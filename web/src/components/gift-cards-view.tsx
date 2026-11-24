@@ -20,7 +20,7 @@ export function GiftCardsView({ gifts, adapter }: GiftViewProps) {
  <article
  key={gift.id}
  data-gift-id={gift.id}
- className="flex min-h-full flex-col rounded-2xl border border-line bg-card p-4 transition-shadow "
+ className="flex min-h-full flex-col rounded-2xl border border-ink bg-card p-4 transition-shadow "
  >
  <div className="flex items-start justify-between gap-2">
  <h3 className="min-w-0 break-words text-base font-bold leading-tight text-ink">

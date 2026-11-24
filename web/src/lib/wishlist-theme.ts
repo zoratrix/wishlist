@@ -78,19 +78,6 @@ export function normalizeThemeEmoji(value: string | null | undefined): string | 
   return trimmed === '' ? null : trimmed;
 }
 
-/** Рамка/полоса шапки цветом темы; по умолчанию — undefined. */
-export function themeBorderStyle(
-  color: string | null | undefined,
-): { borderColor: string } | undefined {
-  return color ? { borderColor: color } : undefined;
-}
-
-export function themeStripStyle(
-  color: string | null | undefined,
-): { backgroundColor: string } | undefined {
-  return color ? { backgroundColor: color } : undefined;
-}
-
 function parseHexColor(color: string): [number, number, number] | null {
   const match = /^#([0-9a-fA-F]{6})$/.exec(color);
   if (!match) {

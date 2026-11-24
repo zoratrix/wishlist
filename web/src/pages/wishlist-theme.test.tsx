@@ -157,11 +157,12 @@ describe('оформление страницы вишлиста: тема и э
  expect(cells.length).toBeGreaterThanOrEqual(48);
  expect(cells[0]?.textContent).toBe(EMOJI);
 
- // Шапка списка непрозрачная: фон как у карточек, а тема — только в рамке.
+ // Шапка списка непрозрачная, с тонкой чёрной рамкой как у кнопок; полосы нет.
  const hero = document.querySelector('[data-cover]') as HTMLElement | null;
  expect(hero?.className).toContain('bg-card');
+ expect(hero?.className).toContain('border-ink');
  expect(hero?.style.backgroundColor).toBe('');
- expect(hero?.style.borderColor).not.toBe('');
+ expect(hero?.style.borderColor).toBe('');
  });
 
  it('публичная страница получает тему и слой эмодзи', async () => {
